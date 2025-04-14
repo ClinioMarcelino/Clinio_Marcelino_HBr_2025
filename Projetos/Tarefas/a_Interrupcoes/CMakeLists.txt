@@ -35,7 +35,8 @@ pico_sdk_init()
 
 # Add executable. Default name is the project name, version 0.1
 
-add_executable(a_Interrupcoes main.c )
+add_executable(a_Interrupcoes main.c
+inc/ssd1306_i2c.c )
 
 pico_set_program_name(a_Interrupcoes "a_Interrupcoes")
 pico_set_program_version(a_Interrupcoes "0.1")
@@ -46,7 +47,11 @@ pico_enable_stdio_usb(a_Interrupcoes 0)
 
 # Add the standard library to the build
 target_link_libraries(a_Interrupcoes
-        pico_stdlib)
+        pico_stdlib
+        hardware_i2c
+        hardware_pio
+        hardware_adc
+        )
 
 # Add the standard include files to the build
 target_include_directories(a_Interrupcoes PRIVATE

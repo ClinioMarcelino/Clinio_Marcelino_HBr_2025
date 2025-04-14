@@ -1,9 +1,12 @@
 ## Tarefa Interrupções
 ---
-Descrição
+# Descrição
 
 Programa em linguagem C que implementa um contador decrescente controlado por interrupções. Utiliza dois botões (GPIO5 e GPIO6) e um display OLED.
-Funcionamento
+
+---
+
+# Funcionamento
 
     Botão A (GPIO5): Inicia a contagem de 9 até 0, com decremento de 1 por segundo.
 
@@ -16,3 +19,5 @@ Funcionamento
         Total de cliques registrados
 
     Um novo clique no Botão A reinicia todo o processo.
+
+---
