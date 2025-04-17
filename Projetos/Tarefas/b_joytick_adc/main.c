@@ -1,7 +1,9 @@
 #include <stdio.h>
 #include "pico/stdlib.h"
 #include "hardware/i2c.h"
+#include "hardware/adc.h"
 #include "inc/ssd1306.h"
+#include <string.h>
 
 #define I2C_SDA 14
 #define I2C_SCL 15
@@ -14,6 +16,7 @@
 #define JSK_Y_PIN (ADC_PICO + JSK_X_CHANNEL)
 
 void init_i2c();
+void init_adc();
 
 int main()
 {
@@ -29,10 +32,9 @@ int main()
         end_page : ssd1306_n_pages - 1
     };
 
-    calculate_render_area_buffer_length(&frame_area);
-
+    calculate_render_area_buffer_length(&frame_area);  
     uint8_t ssd[ssd1306_buffer_length];
-    memset(ssd, 0, ssd1306_buffer_length);
+    memset(ssd, 0 , ssd1306_buffer_length);
     render_on_display(ssd, &frame_area);
 
     char str[32];

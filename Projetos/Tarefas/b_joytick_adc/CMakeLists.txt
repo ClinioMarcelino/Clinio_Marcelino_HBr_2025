@@ -35,7 +35,8 @@ pico_sdk_init()
 
 # Add executable. Default name is the project name, version 0.1
 
-add_executable(b_joytick_adc main.c )
+add_executable(b_joytick_adc main.c 
+inc/ssd1306_i2c.c)
 
 pico_set_program_name(b_joytick_adc "b_joytick_adc")
 pico_set_program_version(b_joytick_adc "0.1")
@@ -59,7 +60,7 @@ target_include_directories(b_joytick_adc PRIVATE
 # Add any user requested libraries
 target_link_libraries(b_joytick_adc 
         hardware_i2c
-        
+        hardware_adc
         )
 
 pico_add_extra_outputs(b_joytick_adc)
