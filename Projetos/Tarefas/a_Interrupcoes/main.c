@@ -128,7 +128,7 @@ void gpio_callback(uint gpio, uint32_t events) {
 void display_status(uint8_t *ssd, struct render_area *frame_area, int count, int clicks) {
     memset(ssd, 0, SSD1306_BUFFER_LENGTH);
 
-    snprintf(str, sizeof(str), "Contador: %d", count);
+    snprintf(str, sizeof(str), "Tempo:    %d", count);
     ssd1306_draw_string(ssd, 5, 10, str);
 
     snprintf(str, sizeof(str), "Clicks:   %d", clicks);
@@ -140,9 +140,8 @@ void display_status(uint8_t *ssd, struct render_area *frame_area, int count, int
 void display_welcome_screen(uint8_t *ssd, struct render_area *frame_area) {
     memset(ssd, 0, SSD1306_BUFFER_LENGTH);
 
-    ssd1306_draw_string(ssd, 20, 10, "Bem vindo!");
-    ssd1306_draw_string(ssd, 5, 40, "A para iniciar");
-    // (ssd,5"para iniciar");
+    ssd1306_draw_string(ssd, 30, 10, "Welcome ! !");
+    ssd1306_draw_string(ssd, 0, 40, "Press A to start");
 
     render_on_display(ssd, frame_area);
 }
