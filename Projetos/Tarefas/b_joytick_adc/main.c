@@ -41,11 +41,11 @@ int main()
 
     while (true) {
         adc_select_input(JSK_Y_CHANNEL);
-        snprintf(str, sizeof(str), "Joystick Y  %d", adc_read());
+        snprintf(str, sizeof(str), "Y  %d", adc_read());
         ssd1306_draw_string(ssd, 5, 20, str);
 
         adc_select_input(JSK_X_CHANNEL);
-        snprintf(str, sizeof(str), "Joystick X  %d", adc_read());
+        snprintf(str, sizeof(str), "X  %d", adc_read());
         ssd1306_draw_string(ssd, 5, 40, str);
 
 
