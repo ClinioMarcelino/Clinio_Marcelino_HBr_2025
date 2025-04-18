@@ -35,7 +35,8 @@ pico_sdk_init()
 
 # Add executable. Default name is the project name, version 0.1
 
-add_executable(c_rp2040_internt_temp main.c )
+add_executable(c_rp2040_internt_temp main.c
+inc/ssd1306_i2c.c )
 
 pico_set_program_name(c_rp2040_internt_temp "c_rp2040_internt_temp")
 pico_set_program_version(c_rp2040_internt_temp "0.1")
