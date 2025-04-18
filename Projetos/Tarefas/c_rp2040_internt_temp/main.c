@@ -58,7 +58,7 @@ int main() {
     while (true) {
 
         snprintf(str, sizeof(str), "%.2f C", read_temperature_celsius());
-        ssd1306_draw_string(ssd, 30, 300, str);
+        ssd1306_draw_string(ssd, 30, 30, str);
 
         render_on_display(ssd, &frame_area);
         sleep_ms(200);
