@@ -22,9 +22,22 @@ float read_temperature_celsius() {
     return temperature_c;
 }
 
+void init_i2c(){
+   
+    i2c_init(i2c1, ssd1306_i2c_clock * 1000);
+    gpio_set_function(I2C_SDA, GPIO_FUNC_I2C);
+    gpio_set_function(I2C_SCL, GPIO_FUNC_I2C);
+    gpio_pull_up(I2C_SDA);
+    gpio_pull_up(I2C_SCL);
+
+  
+    ssd1306_init();
+}
+
 int main() {
     stdio_init_all(); 
     adc_init();       
+    init_i2c();
 
     adc_set_temp_sensor_enabled(true); 
 
