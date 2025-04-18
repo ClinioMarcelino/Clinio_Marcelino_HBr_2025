@@ -1,6 +1,11 @@
 #include <stdio.h>
 #include "pico/stdlib.h"
 #include "hardware/adc.h"
+#include "inc/ssd1306.h"
+
+#define I2C_SDA 14
+#define I2C_SCL 15
+#define SSD1306_BUFFER_LENGTH (ssd1306_width * ssd1306_n_pages)
 
 float read_temperature_celsius() {
     adc_select_input(4); // Canal 4 é o sensor de temperatura interno
@@ -17,15 +22,32 @@ float read_temperature_celsius() {
 }
 
 int main() {
-    stdio_init_all(); // Inicializa a UART para debug
-    adc_init();       // Inicializa o ADC
+    stdio_init_all(); 
+    adc_init();       
 
-    adc_set_temp_sensor_enabled(true); // Ativa o sensor interno
+    adc_set_temp_sensor_enabled(true); 
+
+    struct render_area frame_area = {
+        start_column : 0,
+        end_column : ssd1306_width - 1,
+        start_page : 0,
+        end_page : ssd1306_n_pages - 1
+    };
+
+    calculate_render_area_buffer_length(&frame_area);  
+    uint8_t ssd[ssd1306_buffer_length];
+    memset(ssd, 0 , ssd1306_buffer_length);
+    render_on_display(ssd, &frame_area);
+
+    char str[32];
 
     while (true) {
-        float temperature = read_temperature_celsius();
-        printf("Temperatura: %.2f °C\n", temperature);
-        sleep_ms(1000);
+
+        snprintf(str, sizeof(str), "%.2f C", read_temperature_celsius());
+        ssd1306_draw_string(ssd, 30, 300, str);
+
+        render_on_display(ssd, &frame_area);
+        sleep_ms(200);
     }
 
     return 0;
