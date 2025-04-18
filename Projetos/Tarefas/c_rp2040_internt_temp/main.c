@@ -1,31 +1,32 @@
 #include <stdio.h>
 #include "pico/stdlib.h"
-#include "hardware/i2c.h"
+#include "hardware/adc.h"
 
-// I2C defines
-// This example will use I2C0 on GPIO8 (SDA) and GPIO9 (SCL) running at 400KHz.
-// Pins can be changed, see the GPIO function select table in the datasheet for information on GPIO assignments
-#define I2C_PORT i2c0
-#define I2C_SDA 8
-#define I2C_SCL 9
+float read_temperature_celsius() {
+    adc_select_input(4); // Canal 4 é o sensor de temperatura interno
+    uint16_t adc_raw = adc_read();
 
+    // Converta o valor ADC (12 bits) para tensão
+    const float conversion_factor = 3.3f / (1 << 12); // 3.3V / 4096
+    float voltage = adc_raw * conversion_factor;
 
+    // Fórmula para converter a tensão em temperatura
+    float temperature_c = 27.0f - (voltage - 0.706f) / 0.001721f;
 
-int main()
-{
-    stdio_init_all();
+    return temperature_c;
+}
 
-    // I2C Initialisation. Using it at 400Khz.
-    i2c_init(I2C_PORT, 400*1000);
-    
-    gpio_set_function(I2C_SDA, GPIO_FUNC_I2C);
-    gpio_set_function(I2C_SCL, GPIO_FUNC_I2C);
-    gpio_pull_up(I2C_SDA);
-    gpio_pull_up(I2C_SCL);
-    // For more examples of I2C use see https://github.com/raspberrypi/pico-examples/tree/master/i2c
+int main() {
+    stdio_init_all(); // Inicializa a UART para debug
+    adc_init();       // Inicializa o ADC
+
+    adc_set_temp_sensor_enabled(true); // Ativa o sensor interno
 
     while (true) {
-        printf("Hello, world!\n");
+        float temperature = read_temperature_celsius();
+        printf("Temperatura: %.2f °C\n", temperature);
         sleep_ms(1000);
     }
+
+    return 0;
 }

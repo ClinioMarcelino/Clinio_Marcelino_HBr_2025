@@ -56,6 +56,7 @@ target_include_directories(c_rp2040_internt_temp PRIVATE
 # Add any user requested libraries
 target_link_libraries(c_rp2040_internt_temp 
         hardware_i2c
+        hardware_adc
         
         )
 
