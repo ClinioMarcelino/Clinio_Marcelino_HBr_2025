@@ -1,31 +1,53 @@
 #include <stdio.h>
+#include <math.h>
 #include "pico/stdlib.h"
 #include "hardware/i2c.h"
+#include "inc/ssd1306.h"
+#include <string.h>
 
-// I2C defines
-// This example will use I2C0 on GPIO8 (SDA) and GPIO9 (SCL) running at 400KHz.
-// Pins can be changed, see the GPIO function select table in the datasheet for information on GPIO assignments
-#define I2C_PORT i2c0
-#define I2C_SDA 8
-#define I2C_SCL 9
+#define I2C_SDA 14
+#define I2C_SCL 15
+#define SSD1306_BUFFER_LENGTH (ssd1306_width * ssd1306_n_pages)
 
-
-
-int main()
-{
-    stdio_init_all();
-
-    // I2C Initialisation. Using it at 400Khz.
-    i2c_init(I2C_PORT, 400*1000);
-    
+void init_i2c(){
+   
+    i2c_init(i2c1, ssd1306_i2c_clock * 1000);
     gpio_set_function(I2C_SDA, GPIO_FUNC_I2C);
     gpio_set_function(I2C_SCL, GPIO_FUNC_I2C);
     gpio_pull_up(I2C_SDA);
     gpio_pull_up(I2C_SCL);
-    // For more examples of I2C use see https://github.com/raspberrypi/pico-examples/tree/master/i2c
+
+  
+    ssd1306_init();
+}
+
+
+
+int main(){
+    stdio_init_all();
+    
+    init_i2c();
+
+    struct render_area frame_area = {
+        start_column : 0,
+        end_column : ssd1306_width - 1,
+        start_page : 0,
+        end_page : ssd1306_n_pages - 1
+    };
+
+    calculate_render_area_buffer_length(&frame_area);  
+    uint8_t ssd[ssd1306_buffer_length];
+    memset(ssd, 0 , ssd1306_buffer_length);
+    render_on_display(ssd, &frame_area);
+
+    char str[32];
 
     while (true) {
-        printf("Hello, world!\n");
-        sleep_ms(1000);
+        char r = rand() % 2;
+
+        snprintf(str, sizeof(str), "%c", r);
+        ssd1306_draw_string(ssd, 5, 20, str);
+
+        sleep_ms(250);
     }
 }
