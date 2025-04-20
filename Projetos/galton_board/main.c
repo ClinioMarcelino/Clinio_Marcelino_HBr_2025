@@ -42,11 +42,24 @@ int main(){
 
     char str[32];
 
+    int d,e = 0;
+
     while (true) {
         char r = rand() % 2;
 
-        snprintf(str, sizeof(str), "%c", r);
+        if(r)
+            d++;
+        else
+            e++;
+        
+        memset(ssd, 0 , ssd1306_buffer_length);
+        snprintf(str, sizeof(str), "%d", r);
         ssd1306_draw_string(ssd, 5, 20, str);
+
+        snprintf(str, sizeof(str), "D %d  E  %d", d,e);
+        ssd1306_draw_string(ssd, 5,50, str);
+
+        render_on_display(ssd, &frame_area);
 
         sleep_ms(250);
     }
