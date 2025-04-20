@@ -53,7 +53,7 @@ int main(){
             e++;
         
         memset(ssd, 0 , ssd1306_buffer_length);
-        snprintf(str, sizeof(str), "%d", r);
+        snprintf(str, sizeof(str), "%d .", r);
         ssd1306_draw_string(ssd, 5, 20, str);
 
         snprintf(str, sizeof(str), "D %d  E  %d", d,e);
