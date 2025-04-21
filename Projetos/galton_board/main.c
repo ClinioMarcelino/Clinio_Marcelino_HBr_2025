@@ -15,12 +15,18 @@
 #define N_LINHAS 10
 #define Y_INICIAL_BOARD 5
 #define MOVEMENT 2
+#define X_BASE_BOARD ((ssd1306_width / 2) - ((N_LINHAS / 2) * PINS_SPACE))
+
+
+
+#define MAX_BALLS 100
 
 struct Bola{
     uint8_t x,y;
+    bool active;
 };
 
-uint8_t g_board_pins_local[128][64] = {0};
+// uint8_t ball_
 
 void init_random() {
     adc_init();
@@ -59,17 +65,11 @@ void draw_pins(uint8_t *ssd, struct render_area *frame_area, int8_t n_linhas){
 }
 
 // returns 0 for Left and 1 for Right
-int left_or_right(){
-    int a = rand();
-    int b = rand();
-
-    // Uma operação simples para combinar a e b, mas garantindo uma boa distribuição
-    int combined = (a * 31 + b * 17) % 100; // Modifique os coeficientes conforme necessário
-
-    return combined % 2; // Retorna 0 ou 1
+bool left_or_right(){
+    return rand() % 2; // Retorna 0 ou 1
 }
 
-void update_ball_position(struct Bola *bola){
+void update_ball_position(struct Bola *bola, uint8_t *histograma){
     if(((bola->y) - Y_INICIAL_BOARD) % 4 <= 1 && (bola->y >=4) && (bola->y <= (N_LINHAS*PINS_SPACE))){
         if(left_or_right()){
             bola->x += MOVEMENT;
@@ -80,8 +80,10 @@ void update_ball_position(struct Bola *bola){
     bola->y += MOVEMENT;
 
     if (bola->y > 50){
+        histograma[(bola->x - X_BASE_BOARD)/PINS_SPACE]+=1;
         bola->y = 0;
         bola->x = ssd1306_width / 2;
+        
     }
 }
 
@@ -89,6 +91,18 @@ void position_ball(uint8_t *ssd, struct Bola *bola){
     ssd1306_set_pixel(ssd, bola->x, bola->y,1);
 }
 
+void update_histogram(uint8_t *ssd, uint8_t *histograma){
+    for (int i = 0; i < N_LINHAS; i++) {
+        if (histograma[i] > 0) {
+            int x = X_BASE_BOARD + i * PINS_SPACE; // espaçar corretamente
+            int y_base = ssd1306_height - 1;
+
+            for (int y = y_base; y > y_base - histograma[i]; y--) {
+                ssd1306_set_pixel(ssd, x, y, 1);
+            }
+        }
+    }
+}
 int main(){
     stdio_init_all();
     
@@ -107,24 +121,33 @@ int main(){
     memset(ssd, 0 , ssd1306_buffer_length);
     render_on_display(ssd, &frame_area);
 
-    char str[32];
-
     struct Bola ball = {
         x:ssd1306_width/2,
-        y:0
+        y:0,
+        active:0
     };
 
+    uint8_t histograma[N_LINHAS + 1] = {0};
+    int count_ticks = 0;
+    u_int8_t balls = 0;
    
     while (true) {
         memset(ssd, 0 , ssd1306_buffer_length);
-        draw_pins(ssd,&frame_area,10);
+        draw_pins(ssd,&frame_area,N_LINHAS);
         
         position_ball(ssd, &ball);
+
+        update_ball_position(&ball,histograma);
+        update_histogram(ssd, histograma);
           
         render_on_display(ssd,&frame_area);
 
-        update_ball_position(&ball);
-        sleep_ms(250);
-    }
+        
 
+        // count_ticks++;
+        // if(count_ticks > 9)
+        //     count_ticks = 0;
+        sleep_ms(10);
+    }
+    return 0;
 }
