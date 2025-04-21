@@ -58,7 +58,7 @@ target_include_directories(galton_board PRIVATE
 # Add any user requested libraries
 target_link_libraries(galton_board 
         hardware_i2c
-        
+        hardware_adc
         )
 
 pico_add_extra_outputs(galton_board)
