@@ -21,7 +21,7 @@ void init_i2c(){
     ssd1306_init();
 }
 
-
+uint8_t g_board[128][64];
 
 int main(){
     stdio_init_all();
@@ -42,25 +42,42 @@ int main(){
 
     char str[32];
 
-    int d,e = 0;
-
+    int y=0;
+    int z=10;
+   
     while (true) {
-        char r = rand() % 2;
-
-        if(r)
-            d++;
-        else
-            e++;
-        
         memset(ssd, 0 , ssd1306_buffer_length);
-        snprintf(str, sizeof(str), "%d .", r);
-        ssd1306_draw_string(ssd, 5, 20, str);
-
-        snprintf(str, sizeof(str), "D %d  E  %d", d,e);
-        ssd1306_draw_string(ssd, 5,50, str);
-
+        ssd1306_set_pixel(ssd,64,y,1);
+        ssd1306_set_pixel(ssd,64,z,1);
         render_on_display(ssd, &frame_area);
-
-        sleep_ms(250);
+        
+        if(y>50)
+            y=0;
+        else
+            y+=1;
+        
+            sleep_ms(10);
     }
+
+    // int d,e = 0;
+
+    // while (true) {
+    //     char r = rand() % 2;
+
+    //     if(r)
+    //         d++;
+    //     else
+    //         e++;
+        
+    //     memset(ssd, 0 , ssd1306_buffer_length);
+    //     snprintf(str, sizeof(str), "%d .", r);
+    //     ssd1306_draw_string(ssd, 5, 20, str);
+
+    //     snprintf(str, sizeof(str), "D %d  E  %d", d,e);
+    //     ssd1306_draw_string(ssd, 5,50, str);
+
+    //     render_on_display(ssd, &frame_area);
+
+    //     sleep_ms(100);
+    // }
 }
