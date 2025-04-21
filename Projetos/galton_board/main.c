@@ -17,7 +17,7 @@
 #define MOVEMENT 2
 #define X_BASE_BOARD ((ssd1306_width / 2) - ((N_LINHAS / 2) * PINS_SPACE))
 
-#define MAX_BALLS 100
+#define MAX_BALLS 99
 
 struct Bola {
     uint8_t x, y;
@@ -89,7 +89,7 @@ void update_histogram(uint8_t *ssd, uint8_t *histograma) {
     for (int i = 0; i <= N_LINHAS; i++) {
         if (histograma[i] > 0) {
             int x = X_BASE_BOARD + i * PINS_SPACE;
-            int y_base = ssd1306_height - 1;
+            int y_base = ssd1306_height-1;
 
             for (int y = y_base; y > y_base - histograma[i]; y--) {
                 if (y >= 0) {
@@ -106,7 +106,7 @@ void spawn_ball(struct Bola *bolas) {
             bolas[i].x = ssd1306_width / 2;
             bolas[i].y = 0;
             bolas[i].active = true;
-            break;
+            return;
         }
     }
 }
@@ -136,10 +136,14 @@ int main() {
 
     uint8_t histograma[N_LINHAS + 1] = {0};
     int count_ticks = 0;
+    uint8_t balls_counter = 0;
+    char str[10];
 
     while (true) {
         memset(ssd, 0, ssd1306_buffer_length);
 
+        snprintf(str, sizeof(str), "%d", balls_counter);
+        ssd1306_draw_string(ssd, 110, 5, str);
         draw_pins(ssd, &frame_area, N_LINHAS);
 
         for (int i = 0; i < MAX_BALLS; i++) {
@@ -152,9 +156,10 @@ int main() {
         update_histogram(ssd, histograma);
         render_on_display(ssd, &frame_area);
 
-        if (count_ticks++ > 5) {
+        if (balls_counter < MAX_BALLS && count_ticks++ > 5) {
             spawn_ball(bolas);
             count_ticks = 0;
+            balls_counter++;
         }
 
         sleep_ms(10);
